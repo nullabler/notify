@@ -1,0 +1,16 @@
+port: 8081
+debug: true
+
+telegram:
+  token: "xxxxxxx"
+  trigger: ">>"
+  aliases:
+    username:
+      "user_1": "@user_2"
+      "{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}": "@user_2"
+  templateToChats:
+    pipeline-stage: 
+      - 000000000
+
+templates:
+  pipeline-stage: "{{state}} deploy to STAGE\n  Username: {{username}}\n  Pipeline: https://bitbucket.org/company/project/pipelines/results/{{build-number}}"
