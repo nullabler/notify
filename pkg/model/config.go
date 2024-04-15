@@ -9,6 +9,7 @@ import (
 type Config struct {
 	Port      int          `yaml:"port"`
 	Debug     bool         `yaml:"debug" default:"false"`
+	Kafka     KafkaConf    `yaml:"kafka"`
 	Telegram  TelegramConf `yaml:"telegram"`
 	Templates Templates    `yaml:"templates"`
 }
@@ -18,6 +19,11 @@ type TelegramConf struct {
 	Trigger         string          `yaml:"trigger"`
 	Aliases         Aliases         `yaml:"aliases"`
 	TemplateToChats TemplateToChats `yaml:"templateToChats"`
+}
+
+type KafkaConf struct {
+	Address string `yaml:"address"`
+	Topic   string `yaml:"topic"`
 }
 
 type Templates map[string]string

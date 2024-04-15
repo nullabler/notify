@@ -17,7 +17,13 @@ func main() {
 	flag.Parse()
 	app := application.NewApp(*PathToConf)
 
-	defer app.TelegramProvider.Clear()
+	defer app.Close()
+
+	if app.Config.Debug {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	router := gin.Default()
 	router.GET("/ping", func(c *gin.Context) {
@@ -28,7 +34,11 @@ func main() {
 		action := c.Param("action")
 		req := make(model.Request)
 		c.BindJSON(&req)
-		app.Send(action, req)
+		// app.Send(action, req)
+		if err := app.SendMessage(action, req); err != nil {
+			c.JSON(http.StatusBadRequest, *model.Error(err))
+			return
+		}
 
 		c.JSON(http.StatusOK, *model.Success())
 	})

@@ -110,6 +110,6 @@ func (t *Telegram) cmd() {
 	}
 }
 
-func (t *Telegram) Clear() {
+func (t *Telegram) Close() {
 	t.bot.StopLongPolling()
 }

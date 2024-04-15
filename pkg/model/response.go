@@ -15,3 +15,9 @@ func Success() *Response {
 		Message: "success",
 	}
 }
+
+func Error(err error) *Response {
+	return &Response{
+		Message: err.Error(),
+	}
+}
