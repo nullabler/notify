@@ -36,8 +36,8 @@ run: ## call run service [make run notify go version]
 ps: ## show ps [make ps]
 	docker-compose ps
 
-logs: ## show last 100 lines of logs [make logs notify]
-	docker-compose logs --tail=100 $(ARGS)
+logs: ## show logs for service [make logs notify]
+	docker-compose logs $(ARGS) -f
 
 restart: ## restart service [make restart notify]
 	docker-compose restart $(ARGS)

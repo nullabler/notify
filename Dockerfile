@@ -1,10 +1,10 @@
-FROM golang:1.22 AS builder
+FROM golang:1.22-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
+RUN go install github.com/cosmtrek/air@latest
+
 COPY go.mod go.sum ./
-RUN go mod download && go mod verify
+RUN go mod download
 
-COPY . .
-CMD ["go", "run", "./cmd/main.go"]
+CMD ["air", "-c", ".air.toml"]
