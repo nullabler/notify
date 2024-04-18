@@ -22,8 +22,8 @@ func NewApp(pathToConf string) *App {
 	app := &App{}
 	app.initConfig(pathToConf)
 	app.initProducer()
-	app.initTelegram()
-	app.initRouter()
+	// app.initTelegram()
+	// app.initRouter()
 
 	return app
 }

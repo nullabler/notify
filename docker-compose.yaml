@@ -8,7 +8,7 @@ services:
       - '.build/kafka/data:/bitnami'
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
-# Start Kraft Setup (Kafka as Controller - no Zookeeper)
+      # Start Kraft Setup (Kafka as Controller - no Zookeeper)
       - KAFKA_CFG_NODE_ID=1
       - KAFKA_CFG_BROKER_ID=1
       - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:9093
@@ -39,6 +39,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    restart: always
     volumes:
       - './:/app'
     ports:
