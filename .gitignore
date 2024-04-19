@@ -1,4 +1,5 @@
 config/dev.yaml
+config/*.local.yaml
 
 .build/kafka/data
 

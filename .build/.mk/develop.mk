@@ -5,3 +5,6 @@ test-api: ## to send request for test notify
 
 gateway: ## local go run gateway
 	go run cmd/gateway/gateway.go --path=./config/dev.yaml
+
+consumer: ## local go run consumer
+	go run cmd/consumer/consumer.go --path=./config/dev.local.yaml

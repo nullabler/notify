@@ -1,7 +1,8 @@
 ##@ —— System 🐳 ——————————————————————————————————————————————————————
 
 build: ## docker build
-	docker build --platform=linux/amd64 -t geticit/notify:0.2 -f .build/gateway/Dockerfile.builder
+	docker build --platform=linux/amd64 -t geticit/notify-gateway:0.2 -f .build/gateway/Dockerfile.builder
+	docker build --platform=linux/amd64 -t geticit/notify-consumer:0.2 -f .build/consumer/Dockerfile.builder
 
 up: ## up project [make up] [make up build=1 watch=1]
 ifdef build
