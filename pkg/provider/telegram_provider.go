@@ -6,20 +6,18 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/IBM/sarama"
 	"github.com/mymmrac/telego"
 	th "github.com/mymmrac/telego/telegohandler"
 	tu "github.com/mymmrac/telego/telegoutil"
 )
 
-const UID_TELEGRAM = "telegram"
+const TELEGRAM_UID = "telegram"
 
 type TelegramProvider struct {
 	app *application.App
 
-	consumerGroup sarama.ConsumerGroup
-	bot           *telego.Bot
-	bh            *th.BotHandler
+	bot *telego.Bot
+	bh  *th.BotHandler
 }
 
 func NewTelegramProvider(app *application.App) (*TelegramProvider, error) {
@@ -28,11 +26,6 @@ func NewTelegramProvider(app *application.App) (*TelegramProvider, error) {
 	}
 
 	err := t.initTelego()
-	if err != nil {
-		return t, err
-	}
-
-	err = t.initConsumerGroup()
 	if err != nil {
 		return t, err
 	}
@@ -55,28 +48,13 @@ func (t *TelegramProvider) initTelego() error {
 	return nil
 }
 
-func (t *TelegramProvider) initConsumerGroup() error {
-	config := sarama.NewConfig()
-	consumerGroup, err := sarama.NewConsumerGroup(
-		[]string{t.app.Config.Kafka.Address},
-		"notifications-group",
-		config,
-	)
-	if err != nil {
-		return err
-	}
-	t.consumerGroup = consumerGroup
-
-	return nil
-}
-
-func (t *TelegramProvider) Send(action string, req model.Request) {
-	message, ok := t.getMessage(action, req)
+func (t *TelegramProvider) Send(notify model.Notify) {
+	message, ok := t.getMessage(notify.Action, notify.Body)
 	if !ok {
 		return
 	}
 
-	for _, chatId := range t.app.Config.Telegram.TemplateToChats[action] {
+	for _, chatId := range t.app.Config.Telegram.TemplateToChats[notify.Action] {
 		msg := tu.Message(
 			tu.ID(chatId),
 			message,
@@ -139,5 +117,4 @@ func (t *TelegramProvider) CmdHandler() {
 
 func (t *TelegramProvider) Close() {
 	t.bot.StopLongPolling()
-	t.consumerGroup.Close()
 }

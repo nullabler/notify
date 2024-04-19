@@ -1,5 +1,9 @@
-port: 8081
+port: 80
 debug: true
+
+kafka:
+  address: "kafka:9094"
+  topic: "notify"
 
 telegram:
   token: "xxxxxxx"

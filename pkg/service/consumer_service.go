@@ -3,13 +3,14 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"notify/pkg/application"
 	"notify/pkg/model"
 	"notify/pkg/provider"
 
 	"github.com/IBM/sarama"
 )
+
+const CONSUMER_GROUP_ID = "notify-group"
 
 type ConsumerSvc struct {
 	app              *application.App
@@ -36,9 +37,13 @@ func NewConsumerSvc(app *application.App) (*ConsumerSvc, error) {
 
 func (c *ConsumerSvc) initCounsumerGroup() error {
 	config := sarama.NewConfig()
+	if c.app.Config.Debug {
+		config.Consumer.Return.Errors = true
+	}
+
 	consumerGroup, err := sarama.NewConsumerGroup(
 		[]string{c.app.Config.Kafka.Address},
-		"notify-group",
+		CONSUMER_GROUP_ID,
 		config,
 	)
 	if err != nil {
@@ -65,7 +70,7 @@ func (c *ConsumerSvc) Invoice() {
 	defer cancel()
 	for {
 		if err := c.consumerGroup.Consume(ctx, []string{c.app.Config.Kafka.Topic}, c); err != nil {
-			log.Printf("error from consumer: %v", err)
+			c.app.Logf("Error from consumer: %v", err)
 		}
 
 		if ctx.Err() != nil {
@@ -90,14 +95,19 @@ func (*ConsumerSvc) Cleanup(sarama.ConsumerGroupSession) error {
 func (c *ConsumerSvc) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	c.app.Logf("Start consume claim")
 	for msg := range claim.Messages() {
-		req := model.Request{}
-		err := json.Unmarshal(msg.Value, &req)
+		notify := model.Notify{}
+		err := json.Unmarshal(msg.Value, &notify)
 		if err != nil {
-			log.Printf("failed to unmarshal notification: %v", err)
+			c.app.Logf("Failed to unmarshal notification: %v", err)
 			continue
 		}
-		c.app.Logf("Got a message: %v", req)
-		c.telegramProvider.Send("pipeline-stage", req)
+
+		c.app.Logf("Got a message: %v", notify)
+		switch string(msg.Key) {
+		case provider.TELEGRAM_UID:
+			c.telegramProvider.Send(notify)
+			break
+		}
 		sess.MarkMessage(msg, "")
 	}
 	return nil

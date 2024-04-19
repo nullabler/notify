@@ -37,15 +37,15 @@ func (g *GatewaySvc) initProducer() error {
 }
 
 func (g *GatewaySvc) SendMessage(action string, req model.Request) error {
-	notificationJSON, err := json.Marshal(req)
+	notifyJSON, err := json.Marshal(model.NewNotify(action, req))
 	if err != nil {
 		return err
 	}
 
 	msg := &sarama.ProducerMessage{
 		Topic: g.app.Config.Kafka.Topic,
-		Key:   sarama.StringEncoder(provider.UID_TELEGRAM),
-		Value: sarama.StringEncoder(notificationJSON),
+		Key:   sarama.StringEncoder(provider.TELEGRAM_UID),
+		Value: sarama.StringEncoder(notifyJSON),
 	}
 
 	_, _, err = g.producer.SendMessage(msg)
