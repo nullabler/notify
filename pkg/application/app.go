@@ -3,13 +3,10 @@ package application
 import (
 	"log"
 	"notify/pkg/model"
-
-	"github.com/IBM/sarama"
 )
 
 type App struct {
-	Config   *model.Config
-	Producer sarama.SyncProducer
+	Config *model.Config
 }
 
 func NewApp(pathToConf string) *App {
