@@ -4,8 +4,8 @@ tmp_dir = "tmp"
 
 [build]
 args_bin = []
-bin = "/tmp/notify --path=/app/config/dev.yaml"
-cmd = "while ! nc -z kafka 9094; do sleep 1; done && go build -v -o /tmp/notify ./cmd/main.go"
+bin = "/tmp/gateway --path=/app/config/dev.yaml"
+cmd = "while ! nc -z kafka 9094; do sleep 1; done && go build -v -o /tmp/gateway ./cmd/gateway/gateway.go"
 delay = 1000
 exclude_dir = ["assets", "tmp", "vendor", "testdata"]
 exclude_file = []

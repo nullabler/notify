@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"notify/pkg/application"
 	"notify/pkg/model"
+	"notify/pkg/service"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -16,8 +17,11 @@ var PathToConf = flag.String("path", "./config.yaml", "Path to config file")
 func main() {
 	flag.Parse()
 	app := application.NewApp(*PathToConf)
-
-	defer app.Close()
+	svc, err := service.NewGatewaySvc(app)
+	defer svc.Close()
+	if err != nil {
+		log.Panicf("Error from init gateway service: %s", err)
+	}
 
 	if app.Config.Debug {
 		gin.SetMode(gin.DebugMode)
@@ -34,8 +38,7 @@ func main() {
 		action := c.Param("action")
 		req := make(model.Request)
 		c.BindJSON(&req)
-		// app.Send(action, req)
-		if err := app.SendMessage(action, req); err != nil {
+		if err := svc.SendMessage(action, req); err != nil {
 			c.JSON(http.StatusBadRequest, *model.Error(err))
 			return
 		}

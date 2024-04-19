@@ -1,7 +1,7 @@
 ##@ —— System 🐳 ——————————————————————————————————————————————————————
 
 build: ## docker build
-	docker build --platform=linux/amd64 -t geticit/notify:0.2 -f Dockerfile.builder
+	docker build --platform=linux/amd64 -t geticit/notify:0.2 -f .build/gateway/Dockerfile.builder
 
 up: ## up project [make up] [make up build=1 watch=1]
 ifdef build
@@ -41,7 +41,3 @@ logs: ## show logs for service [make logs notify]
 
 restart: ## restart service [make restart notify]
 	docker-compose restart $(ARGS)
-
-test-api: ## to send request for test notify
-	curl -X POST http://localhost:8081/send/pipeline-stage -d '{"username": "user_1", "state": "Start", "build-number": "123"}'
-

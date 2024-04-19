@@ -35,14 +35,24 @@ services:
     depends_on:
       - kafka
 
-  notify:
+  notify-gateway:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: .build/gateway/Dockerfile
     restart: always
     volumes:
       - './:/app'
     ports:
       - '${NOTIFY_PORT}:80'
+    depends_on:
+      - kafka
+
+  notify-consumer:
+    build:
+      context: .
+      dockerfile: .build/consumer/Dockerfile
+    restart: always
+    volumes:
+      - './:/app'
     depends_on:
       - kafka
