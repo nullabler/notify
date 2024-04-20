@@ -1,8 +1,8 @@
 ##@ —— System 🐳 ——————————————————————————————————————————————————————
 
 build: ## docker build
-	docker build --platform=linux/amd64 -t nullstash/notify-gateway:0.2 -f .build/gateway/Dockerfile.build
-	docker build --platform=linux/amd64 -t nullstash/notify-consumer:0.2 -f .build/consumer/Dockerfile.build
+	docker build --platform=linux/amd64 -t nullstash/notify-gateway:0.3 -f .build/gateway/Dockerfile.build .
+	docker build --platform=linux/amd64 -t nullstash/notify-consumer:0.3 -f .build/consumer/Dockerfile.build .
 
 up: ## up project [make up] [make up build=1 watch=1]
 ifdef build
