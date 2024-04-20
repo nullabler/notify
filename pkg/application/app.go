@@ -30,6 +30,10 @@ func (app *App) Dump(msg interface{}) {
 	}
 }
 
+func (app *App) Log(v ...any) {
+	log.Println(v...)
+}
+
 func (app *App) Logf(format string, v ...any) {
 	log.Printf(format, v...)
 }

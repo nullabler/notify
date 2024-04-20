@@ -24,18 +24,6 @@ func NewGatewaySvc(app *application.App) (*GatewaySvc, error) {
 	return svc, err
 }
 
-func (g *GatewaySvc) initProducer() error {
-	config := sarama.NewConfig()
-	config.Producer.Return.Successes = true
-	producer, err := sarama.NewSyncProducer([]string{g.app.Config.Kafka.Address}, config)
-	if err != nil {
-		return err
-	}
-	g.producer = producer
-
-	return nil
-}
-
 func (g *GatewaySvc) SendMessage(action string, req model.Request) error {
 	notifyJSON, err := json.Marshal(model.NewNotify(action, req))
 	if err != nil {
@@ -55,4 +43,16 @@ func (g *GatewaySvc) SendMessage(action string, req model.Request) error {
 
 func (g *GatewaySvc) Close() error {
 	return g.producer.Close()
+}
+
+func (g *GatewaySvc) initProducer() error {
+	config := sarama.NewConfig()
+	config.Producer.Return.Successes = true
+	producer, err := sarama.NewSyncProducer([]string{g.app.Config.Kafka.Address}, config)
+	if err != nil {
+		return err
+	}
+	g.producer = producer
+
+	return nil
 }

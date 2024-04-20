@@ -35,36 +35,6 @@ func NewConsumerSvc(app *application.App) (*ConsumerSvc, error) {
 	return c, nil
 }
 
-func (c *ConsumerSvc) initCounsumerGroup() error {
-	config := sarama.NewConfig()
-	if c.app.Config.Debug {
-		config.Consumer.Return.Errors = true
-	}
-
-	consumerGroup, err := sarama.NewConsumerGroup(
-		[]string{c.app.Config.Kafka.Address},
-		CONSUMER_GROUP_ID,
-		config,
-	)
-	if err != nil {
-		return err
-	}
-	c.consumerGroup = consumerGroup
-
-	return nil
-}
-
-func (c *ConsumerSvc) initTelegramProvider() error {
-	telegramProvider, err := provider.NewTelegramProvider(c.app)
-	if err != nil {
-		return err
-	}
-	c.telegramProvider = telegramProvider
-	go c.telegramProvider.CmdHandler()
-
-	return nil
-}
-
 func (c *ConsumerSvc) Invoice() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -110,5 +80,41 @@ func (c *ConsumerSvc) ConsumeClaim(sess sarama.ConsumerGroupSession, claim saram
 		}
 		sess.MarkMessage(msg, "")
 	}
+	return nil
+}
+
+func (c *ConsumerSvc) initCounsumerGroup() error {
+	config := sarama.NewConfig()
+	if c.app.Config.Debug {
+		config.Consumer.Return.Errors = true
+	}
+
+	consumerGroup, err := sarama.NewConsumerGroup(
+		[]string{c.app.Config.Kafka.Address},
+		CONSUMER_GROUP_ID,
+		config,
+	)
+	if err != nil {
+		return err
+	}
+	c.consumerGroup = consumerGroup
+
+	return nil
+}
+
+func (c *ConsumerSvc) initTelegramProvider() error {
+	telegramProvider, err := provider.NewTelegramProvider(c.app)
+	if err != nil {
+		return err
+	}
+
+	c.telegramProvider = telegramProvider
+	if !c.telegramProvider.IsEnabled() {
+		c.app.Log("Telegram disabled")
+		return nil
+	}
+
+	go c.telegramProvider.CmdHandler()
+
 	return nil
 }
