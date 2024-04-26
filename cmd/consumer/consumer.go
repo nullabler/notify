@@ -18,5 +18,5 @@ func main() {
 	}
 	defer svc.Close()
 
-	svc.Invoice()
+	svc.Invoke()
 }

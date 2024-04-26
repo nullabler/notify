@@ -35,7 +35,7 @@ func NewConsumerSvc(app *application.App) (*ConsumerSvc, error) {
 	return c, nil
 }
 
-func (c *ConsumerSvc) Invoice() {
+func (c *ConsumerSvc) Invoke() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	for {
