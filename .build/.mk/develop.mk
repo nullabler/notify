@@ -1,10 +1,13 @@
 ##@ —— Develop  ———————————————————————————————————————————————————————
 
-test-api: ## to send request for test notify
-	curl -X POST http://localhost:8081/send/pipeline-stage -d '{"username": "user_1", "state": "Start", "build-number": "123"}'
-
 gateway: ## local go run gateway
-	go run cmd/gateway/gateway.go --path=./config/dev.yaml
+	docker-compose exec notify-gateway go run cmd/gateway/gateway.go --path=./config/dev.yaml
 
 consumer: ## local go run consumer
-	go run cmd/consumer/consumer.go --path=./config/dev.local.yaml
+	docker-compose exec notify-consumer go run cmd/consumer/consumer.go --path=./config/dev.yaml
+
+send: ## to send request for test notify
+	curl -X POST http://localhost:8081/send/pipeline-stage -d '{"username": "user_1", "state": "Start", "build-number": "123"}'
+
+ping: ## ping/pong gateway
+	curl http://localhost:8081/ping
