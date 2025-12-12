@@ -11,7 +11,7 @@ make up build=1 watch=1
 ## Setting
 For setting notification you need asking your bot:
 ```
->>> ChatID
+>> ChatID
 ```
 Add you ChatID in config/dev.yaml for templateToChats block
 
